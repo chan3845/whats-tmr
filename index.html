@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tomorrow's Date & Current Time</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --gradient-light: linear-gradient(135deg, #3b82f6, #60a5fa, #a78bfa);
+      --gradient-dark: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+      --text-light: #ffffff;
+      --text-dark: #e2e8f0;
+      --card-light: rgba(255, 255, 255, 0.15);
+      --card-dark: rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: var(--gradient-light);
+      color: var(--text-light);
+      transition: background 0.5s ease, color 0.3s;
+    }
+
+    header {
+      font-size: 2.5rem;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .date-card {
+      background: var(--card-light);
+      backdrop-filter: blur(15px);
+      padding: 20px 40px;
+      border-radius: 20px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      transition: background 0.3s, box-shadow 0.3s;
+      margin-bottom: 20px;
+      min-width: 280px;
+    }
+
+    .toggle-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      backdrop-filter: blur(8px);
+      transition: transform 0.2s, background 0.3s;
+    }
+
+    .toggle-btn:hover {
+      transform: scale(1.05);
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .timezone-select {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: none;
+      font-size: 1rem;
+      background: rgba(0, 0, 0, 0.4);
+      color: white;
+      backdrop-filter: blur(8px);
+      cursor: pointer;
+      outline: none;
+    }
+
+    body.dark .timezone-select {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    body.dark {
+      background: var(--gradient-dark);
+      color: var(--text-dark);
+    }
+
+    body.dark .date-card {
+      background: var(--card-dark);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+    }
+  </style>
+</head>
+<body>
+  <button class="toggle-btn" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+  <header>Tomorrow's Date & Current Time</header>
+  
+  <div class="date-card" id="tomorrow"></div>
+  <div class="date-card" id="currentTime"></div>
+  
+  <select class="timezone-select" id="timezoneSelect" onchange="updateTimeAndDate()">
+    <option value="UTC">UTC</option>
+    <option value="Asia/Yangon">Asia/Yangon</option>
+    <option value="Asia/Kuala_Lumpur">Asia/Kuala_Lumpur</option>
+    <option value="Asia/Bangkok">Asia/Bangkok</option>
+    <option value="Asia/Singapore">Asia/Singapore</option>
+    <option value="Europe/London">Europe/London</option>
+    <option value="Europe/Paris">Europe/Paris</option>
+    <option value="America/New_York">America/New_York</option>
+    <option value="America/Los_Angeles">America/Los_Angeles</option>
+    <option value="Australia/Sydney">Australia/Sydney</option>
+  </select>
+
+  <script>
+    function getTomorrowDate(tz) {
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      return new Intl.DateTimeFormat('en-US', {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        timeZone: tz
+      }).format(tomorrow);
+    }
+
+    function getCurrentTime(tz) {
+      const now = new Date();
+      return new Intl.DateTimeFormat('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+        timeZone: tz
+      }).format(now);
+    }
+
+    function updateTimeAndDate() {
+      const tz = document.getElementById('timezoneSelect').value;
+      document.getElementById('tomorrow').textContent = "Tomorrow: " + getTomorrowDate(tz);
+      document.getElementById('currentTime').textContent = "Current Time: " + getCurrentTime(tz);
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark');
+      const btn = document.querySelector('.toggle-btn');
+      btn.textContent = document.body.classList.contains('dark') 
+        ? '☀️ Light Mode' 
+        : '🌙 Dark Mode';
+    }
+
+    // Update every second
+    setInterval(updateTimeAndDate, 1000);
+
+    // Initialize
+    updateTimeAndDate();
+  </script>
+</body>
+</html>
+
